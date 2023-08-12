@@ -15,7 +15,7 @@ from models.city import City
 from models.amenity import Amenity
 from models.state import State
 
-def HBNB(arg):
+def HBNBP(arg):
     braces_C = re.search(r"\{(.*?)\}", arg)
     brks = re.search(r"\[(.*?)\]", arg)
     if braces_C is None:
@@ -69,26 +69,25 @@ class HBNBCommand(cmd.Cmd):
         print("*** Unknown syntax: {}".format(arg))
         return False
 
-    def HBNB_emptyline(self):
+    def HB_emptyline(self):
         """ This is empty line function Do nothing that will not do anything """
 
         pass
 
-    def HBNB_EOF(self, arg):
-        """ This function wil signal the HBNB to quit """
-
-        print("")
-        return True
-
-    def HBNB_quit(self, arg):
+    def HB_quit(self, arg):
         """ This function will quit the cmd """
 
         return True
 
-    def HBNB_create(self, arg):
+    def HB_EOF(self, arg):
+        """ This function wil signal the HBNB to quit """
+
+        print("")
+        return True
+    def HB_create(self, arg):
         """ This function will print the id """
 
-        argl = HBNB(arg)
+        argl = HBNBP(arg)
         if len(argl) == 0:
             print("** class name missing **")
         elif argl[0] not in HBNBCommand.__classes:
@@ -97,10 +96,10 @@ class HBNBCommand(cmd.Cmd):
             print(eval(argl[0])().id)
             storage.save()
 
-    def HBNB_show(self, arg):
+    def HB_show(self, arg):
         """ This funcation is representation of a class instance of a given id """
 
-        argl = HBNB(arg)
+        argl = HBNBP(arg)
         objdict = storage.all()
         if len(argl) == 0:
             print("** class name missing **")
@@ -113,9 +112,9 @@ class HBNBCommand(cmd.Cmd):
         else:
             print(objdict["{}.{}".format(argl[0], argl[1])])
 
-    def HBNB_destroy(self, arg):
+    def HB_destroy(self, arg):
         """ This will delete the id """
-        argl = HBNB(arg)
+        argl = HBNBP(arg)
         objdict = storage.all()
         if len(argl) == 0:
             print("** class name missing **")
@@ -129,9 +128,9 @@ class HBNBCommand(cmd.Cmd):
             del objdict["{}.{}".format(argl[0], argl[1])]
             storage.save()
 
-    def HBNB_all(self, arg):
+    def HB_all(self, arg):
         """ This funcation will displays all instantiated objects if there is no class specified """
-        argl = HBNB(arg)
+        argl = HBNBP(arg)
         if len(argl) > 0 and argl[0] not in HBNBCommand.__classes:
             print("** class doesn't exist **")
         else:
@@ -143,18 +142,18 @@ class HBNBCommand(cmd.Cmd):
                     objl.append(obj.__str__())
             print(objl)
 
-    def HBNB_count(self, arg):
+    def HB_count(self, arg):
         """ This function will retrieve the count """
-        argl = HBNB(arg)
+        argl = HBNBP(arg)
         count = 0
         for obj in storage.all().values():
             if argl[0] == obj.__class__.__name__:
                 count = count + 1
         print(count)
 
-    def HBNB_update(self, arg):
+    def HB_update(self, arg):
         """ This function will Update a class instance of a given id by adding or updating """
-        argl = HBNB(arg)
+        argl = HBNBP(arg)
         objdict = storage.all()
 
         if len(argl) == 0:
