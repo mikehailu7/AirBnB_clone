@@ -1,66 +1,62 @@
 #!/usr/bin/python3
-"""done by yared and mike hailu."""
+# Authors: mikiasHailu and yared Tsgie
+
+""" This function defines the HBnB console """
+
 import re
 import cmd
-from models.review import Review
-from shlex import split
 from models.place import Place
+from models.review import Review
 from models import storage
-from models.amenity import Amenity
 from models.base_model import BaseModel
-from models.city import City
 from models.user import User
+from shlex import split
+from models.city import City
+from models.amenity import Amenity
 from models.state import State
 
-
-def parse(arg):
-    curly_braces = re.search(r"\{(.*?)\}", arg)
-    brackets = re.search(r"\[(.*?)\]", arg)
-    if curly_braces is None:
-        if brackets is None:
+def HBNB(arg):
+    braces_C = re.search(r"\{(.*?)\}", arg)
+    brks = re.search(r"\[(.*?)\]", arg)
+    if braces_C is None:
+        if brks is None:
             return [i.strip(",") for i in split(arg)]
         else:
-            lexer = split(arg[:brackets.span()[0]])
+            lexer = split(arg[:brks.span()[0]])
             retl = [i.strip(",") for i in lexer]
-            retl.append(brackets.group())
+            retl.append(brks.group())
             return retl
     else:
-        lexer = split(arg[:curly_braces.span()[0]])
+        lexer = split(arg[:braces_C.span()[0]])
         retl = [i.strip(",") for i in lexer]
-        retl.append(curly_braces.group())
+        retl.append(braces_C.group())
         return retl
 
 
 class HBNBCommand(cmd.Cmd):
-    """hbhbcommand used to command the alx command.
-    Attributes:
-        prompt (str): it is the command prompt.
-    """
+    """ This is the HBNBCommand class """
 
     prompt = "(hbnb) "
     __classes = {
-        "BaseModel",
-        "User",
-        "State",
-        "City",
-        "Place",
-        "Amenity",
-        "Review"
-    }
+            "BaseModel",
+            "State",
+            "User",
+            "Place",
+            "City",
+            "Amenity",
+            "Review"
+            }
 
-    def emptyline(self):
-        """it is empty line."""
-        pass
+    def HBNB_default(self, arg):
+        """ This function will represent the default state of the cmd module """
 
-    def default(self, arg):
-        """invalid input defualt response"""
         argdict = {
-            "all": self.do_all,
-            "show": self.do_show,
-            "destroy": self.do_destroy,
-            "count": self.do_count,
-            "update": self.do_update
-        }
+                "all": self.do_all,
+                "show": self.do_show,
+                "destroy": self.do_destroy,
+                "count": self.do_count,
+                "update": self.do_update
+                }
         match = re.search(r"\.", arg)
         if match is not None:
             argl = [arg[:match.span()[0]], arg[match.span()[1]:]]
@@ -73,20 +69,26 @@ class HBNBCommand(cmd.Cmd):
         print("*** Unknown syntax: {}".format(arg))
         return False
 
-    def do_quit(self, arg):
-        """used to quit the program."""
-        return True
+    def HBNB_emptyline(self):
+        """ This is empty line function Do nothing that will not do anything """
 
-    def do_EOF(self, arg):
-        """used to do eof."""
+        pass
+
+    def HBNB_EOF(self, arg):
+        """ This function wil signal the HBNB to quit """
+
         print("")
         return True
 
-    def do_create(self, arg):
-        """Usage: create <class>
-        used to create a new class.
-        """
-        argl = parse(arg)
+    def HBNB_quit(self, arg):
+        """ This function will quit the cmd """
+
+        return True
+
+    def HBNB_create(self, arg):
+        """ This function will print the id """
+
+        argl = HBNB(arg)
         if len(argl) == 0:
             print("** class name missing **")
         elif argl[0] not in HBNBCommand.__classes:
@@ -95,11 +97,10 @@ class HBNBCommand(cmd.Cmd):
             print(eval(argl[0])().id)
             storage.save()
 
-    def do_show(self, arg):
-        """Usage: show <class> <id> or <class>.show(<id>)
-        used to display the id and show id
-        """
-        argl = parse(arg)
+    def HBNB_show(self, arg):
+        """ This funcation is representation of a class instance of a given id """
+
+        argl = HBNB(arg)
         objdict = storage.all()
         if len(argl) == 0:
             print("** class name missing **")
@@ -112,10 +113,9 @@ class HBNBCommand(cmd.Cmd):
         else:
             print(objdict["{}.{}".format(argl[0], argl[1])])
 
-    def do_destroy(self, arg):
-        """Usage: destroy <class> <id> or <class>.destroy(<id>)
-        used to delete ."""
-        argl = parse(arg)
+    def HBNB_destroy(self, arg):
+        """ This will delete the id """
+        argl = HBNB(arg)
         objdict = storage.all()
         if len(argl) == 0:
             print("** class name missing **")
@@ -129,10 +129,9 @@ class HBNBCommand(cmd.Cmd):
             del objdict["{}.{}".format(argl[0], argl[1])]
             storage.save()
 
-    def do_all(self, arg):
-        """Usage: all or all <class> or <class>.all()
-        display all or display all classs."""
-        argl = parse(arg)
+    def HBNB_all(self, arg):
+        """ This funcation will displays all instantiated objects if there is no class specified """
+        argl = HBNB(arg)
         if len(argl) > 0 and argl[0] not in HBNBCommand.__classes:
             print("** class doesn't exist **")
         else:
@@ -144,22 +143,18 @@ class HBNBCommand(cmd.Cmd):
                     objl.append(obj.__str__())
             print(objl)
 
-    def do_count(self, arg):
-        """Usage: count <class> or <class>.count()
-        used to count the number of class."""
-        argl = parse(arg)
+    def HBNB_count(self, arg):
+        """ This function will retrieve the count """
+        argl = HBNB(arg)
         count = 0
         for obj in storage.all().values():
             if argl[0] == obj.__class__.__name__:
-                count += 1
+                count = count + 1
         print(count)
 
-    def do_update(self, arg):
-        """Usage: update <class> <id> <attribute_name> <attribute_value> or
-       <class>.update(<id>, <attribute_name>, <attribute_value>) or
-       <class>.update(<id>, <dictionary>)
-        used to update class."""
-        argl = parse(arg)
+    def HBNB_update(self, arg):
+        """ This function will Update a class instance of a given id by adding or updating """
+        argl = HBNB(arg)
         objdict = storage.all()
 
         if len(argl) == 0:
@@ -183,7 +178,6 @@ class HBNBCommand(cmd.Cmd):
             except NameError:
                 print("** value missing **")
                 return False
-
         if len(argl) == 4:
             obj = objdict["{}.{}".format(argl[0], argl[1])]
             if argl[2] in obj.__class__.__dict__.keys():

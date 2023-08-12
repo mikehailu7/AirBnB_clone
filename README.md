@@ -1,1 +1,1 @@
-This is a group project on airbnb
+This is a group project on airbnb console
