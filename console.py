@@ -1,20 +1,16 @@
 #!/usr/bin/python3
-# Authors: mikiasHailu and yared Tsgie
-
-""" This function defines the HBnB console """
-
-import re
+"""Defines the HBnB console."""
 import cmd
-from models.place import Place
-from models.review import Review
+import re
+from shlex import split
 from models import storage
 from models.base_model import BaseModel
 from models.user import User
-from shlex import split
-from models.city import City
-from models.amenity import Amenity
 from models.state import State
-
+from models.city import City
+from models.place import Place
+from models.amenity import Amenity
+from models.review import Review
 
 
 def parse(arg):
@@ -36,7 +32,11 @@ def parse(arg):
 
 
 class HBNBCommand(cmd.Cmd):
-    """ This is the HBNBCommand class """
+    """Defines the HolbertonBnB command interpreter.
+
+    Attributes:
+        prompt (str): The command prompt.
+    """
 
     prompt = "(hbnb) "
     __classes = {
@@ -50,14 +50,11 @@ class HBNBCommand(cmd.Cmd):
             }
 
     def emptyline(self):
-
-        """ This is empty line function Do nothing that will not do anything """
-
+        """Do nothing upon receiving an empty line."""
         pass
 
     def default(self, arg):
-        """ This function will represent the default state of the cmd module """
-
+        """Default behavior for cmd module when input is invalid"""
         argdict = {
                 "all": self.do_all,
                 "show": self.do_show,
@@ -77,20 +74,19 @@ class HBNBCommand(cmd.Cmd):
         print("*** Unknown syntax: {}".format(arg))
         return False
 
-    def Air_quit(self, arg):
-        """ This function will quit the cmd """
-
+    def do_quit(self, arg):
+        """Quit command to exit the program."""
         return True
 
-    def Air_EOF(self, arg):
-        """ This function wil signal the HBNB to quit """
-
+    def do_EOF(self, arg):
+        """EOF signal to exit the program."""
         print("")
         return True
 
-    def Air_create(self, arg):
-        """ This function will print the id """
-
+    def do_create(self, arg):
+        """Usage: create <class>
+        Create a new class instance and print its id.
+        """
         argl = parse(arg)
         if len(argl) == 0:
             print("** class name missing **")
@@ -100,9 +96,10 @@ class HBNBCommand(cmd.Cmd):
             print(eval(argl[0])().id)
             storage.save()
 
-    def Air_show(self, arg):
-        """ This funcation is representation of a class instance of a given id """
-
+    def do_show(self, arg):
+        """Usage: show <class> <id> or <class>.show(<id>)
+        Display the string representation of a class instance of a given id.
+        """
         argl = parse(arg)
         objdict = storage.all()
         if len(argl) == 0:
@@ -116,9 +113,9 @@ class HBNBCommand(cmd.Cmd):
         else:
             print(objdict["{}.{}".format(argl[0], argl[1])])
 
-    def Air_destroy(self, arg):
-        """ This will delete the id """
-
+    def do_destroy(self, arg):
+        """Usage: destroy <class> <id> or <class>.destroy(<id>)
+        Delete a class instance of a given id."""
         argl = parse(arg)
         objdict = storage.all()
         if len(argl) == 0:
@@ -133,9 +130,10 @@ class HBNBCommand(cmd.Cmd):
             del objdict["{}.{}".format(argl[0], argl[1])]
             storage.save()
 
-    def Air_all(self, arg):
-        """ This funcation will displays all instantiated objects if there is no class specified """
-
+    def do_all(self, arg):
+        """Usage: all or all <class> or <class>.all()
+        Display string representations of all instances of a given class.
+        If no class is specified, displays all instantiated objects."""
         argl = parse(arg)
         if len(argl) > 0 and argl[0] not in HBNBCommand.__classes:
             print("** class doesn't exist **")
@@ -148,8 +146,9 @@ class HBNBCommand(cmd.Cmd):
                     objl.append(obj.__str__())
             print(objl)
 
-    def Air_count(self, arg):
-        """ This function will retrieve the count """
+    def do_count(self, arg):
+        """Usage: count <class> or <class>.count()
+        Retrieve the number of instances of a given class."""
         argl = parse(arg)
         count = 0
         for obj in storage.all().values():
@@ -157,8 +156,12 @@ class HBNBCommand(cmd.Cmd):
                 count += 1
         print(count)
 
-    def Air_destroy_update(self, arg):
-        """ This function will Update a class instance of a given id by adding or updating """
+    def do_update(self, arg):
+        """Usage: update <class> <id> <attribute_name> <attribute_value> or
+       <class>.update(<id>, <attribute_name>, <attribute_value>) or
+       <class>.update(<id>, <dictionary>)
+        Update a class instance of a given id by adding or updating
+        a given attribute key/value pair or dictionary."""
         argl = parse(arg)
         objdict = storage.all()
 
