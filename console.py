@@ -15,8 +15,6 @@ from models.city import City
 from models.amenity import Amenity
 from models.state import State
 
-
-
 def parse(arg):
     curly_braces = re.search(r"\{(.*?)\}", arg)
     brackets = re.search(r"\[(.*?)\]", arg)
@@ -138,23 +136,8 @@ class HBNBCommand(cmd.Cmd):
         count = 0
         for obj in storage.all().values():
             if argl[0] == obj.__class__.__name__:
-                count += 1
+                count = count + 1
         print(count)
-
-    def do_all(self, arg):
-        """ This funcation will displays all instantiated objects if there is no class specified """
-
-        argl = parse(arg)
-        if len(argl) > 0 and argl[0] not in HBNBCommand.__classes:
-            print("** class doesn't exist **")
-        else:
-            objl = []
-            for obj in storage.all().values():
-                if len(argl) > 0 and argl[0] == obj.__class__.__name__:
-                    objl.append(obj.__str__())
-                elif len(argl) == 0:
-                    objl.append(obj.__str__())
-            print(objl)
 
     def do_update(self, arg):
         """ This function will Update a class instance of a given id by adding or updating """
@@ -199,6 +182,21 @@ class HBNBCommand(cmd.Cmd):
                 else:
                     obj.__dict__[k] = v
         storage.save()
+
+    def do_all(self, arg):
+        """ This funcation will displays all instantiated objects if there is no class specified """
+
+        argl = parse(arg)
+        if len(argl) > 0 and argl[0] not in HBNBCommand.__classes:
+            print("** class doesn't exist **")
+        else:
+            objl = []
+            for obj in storage.all().values():
+                if len(argl) > 0 and argl[0] == obj.__class__.__name__:
+                    objl.append(obj.__str__())
+                elif len(argl) == 0:
+                    objl.append(obj.__str__())
+            print(objl)
 
 
 if __name__ == "__main__":
