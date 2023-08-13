@@ -49,21 +49,15 @@ class HBNBCommand(cmd.Cmd):
             "Review"
             }
 
-    def emptyline(self):
-
-        """ This is empty line function Do nothing that will not do anything """
-
-        pass
-
     def default(self, arg):
         """ This function will represent the default state of the cmd module """
 
         argdict = {
-                "all": self.ar_all,
-                "show": self.ar_show,
-                "destroy": self.ar_destroy,
-                "count": self.ar_count,
-                "update": self.ar_update
+                "all": self.do_all,
+                "show": self.do_show,
+                "destroy": self.do_destroy,
+                "count": self.do_count,
+                "update": self.do_update
                 }
         match = re.search(r"\.", arg)
         if match is not None:
@@ -77,18 +71,23 @@ class HBNBCommand(cmd.Cmd):
         print("*** Unknown syntax: {}".format(arg))
         return False
 
-    def ar_quit(self, arg):
-        """ This function will quit the cmd """
+    def emptyline(self):
 
-        return True
+        """ This is empty line function Do nothing that will not do anything """
 
-    def ar_EOF(self, arg):
+        pass
+    def do_EOF(self, arg):
         """ This function wil signal the HBNB to quit """
 
         print("")
         return True
 
-    def ar_create(self, arg):
+    def do_quit(self, arg):
+        """ This function will quit the cmd """
+
+        return True
+
+    def do_create(self, arg):
         """ This function will print the id """
 
         argl = parse(arg)
@@ -100,7 +99,7 @@ class HBNBCommand(cmd.Cmd):
             print(eval(argl[0])().id)
             storage.save()
 
-    def ar_show(self, arg):
+    def do_show(self, arg):
         """ This funcation is representation of a class instance of a given id """
 
         argl = parse(arg)
@@ -116,7 +115,7 @@ class HBNBCommand(cmd.Cmd):
         else:
             print(objdict["{}.{}".format(argl[0], argl[1])])
 
-    def ar_destroy(self, arg):
+    def do_destroy(self, arg):
         """ This will delete the id """
 
         argl = parse(arg)
@@ -133,7 +132,16 @@ class HBNBCommand(cmd.Cmd):
             del objdict["{}.{}".format(argl[0], argl[1])]
             storage.save()
 
-    def ar_all(self, arg):
+    def do_count(self, arg):
+        """ This function will retrieve the count """
+        argl = parse(arg)
+        count = 0
+        for obj in storage.all().values():
+            if argl[0] == obj.__class__.__name__:
+                count += 1
+        print(count)
+
+    def do_all(self, arg):
         """ This funcation will displays all instantiated objects if there is no class specified """
 
         argl = parse(arg)
@@ -148,16 +156,7 @@ class HBNBCommand(cmd.Cmd):
                     objl.append(obj.__str__())
             print(objl)
 
-    def ar_count(self, arg):
-        """ This function will retrieve the count """
-        argl = parse(arg)
-        count = 0
-        for obj in storage.all().values():
-            if argl[0] == obj.__class__.__name__:
-                count += 1
-        print(count)
-
-    def ar_update(self, arg):
+    def do_update(self, arg):
         """ This function will Update a class instance of a given id by adding or updating """
         argl = parse(arg)
         objdict = storage.all()
@@ -183,7 +182,6 @@ class HBNBCommand(cmd.Cmd):
             except NameError:
                 print("** value missing **")
                 return False
-
         if len(argl) == 4:
             obj = objdict["{}.{}".format(argl[0], argl[1])]
             if argl[2] in obj.__class__.__dict__.keys():
